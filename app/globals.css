@@ -68,18 +68,147 @@
 
 @layer base {
   * {
-    @apply border-border !scroll-smooth;
+    @apply border-border;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
+
   button {
     @apply active:outline-none;
+  }
+
+  /* Scroll Snapping */
+  .scroll-snap-container {
+    scroll-snap-type: y mandatory;
+    overflow-y: auto;
+    height: 100vh;
+  }
+
+  .section {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 }
 
 @layer utilities {
   .heading {
     @apply font-bold text-4xl md:text-5xl text-center;
+  }
+
+  /* Improved gradient text with better fallbacks */
+  .gradient-text-safe {
+    color: #a855f7;
+    /* Purple fallback */
+    background: linear-gradient(to right, #a855f7, #3b82f6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+  }
+
+  /* Ensure gradient text is visible on all devices */
+  @supports (-webkit-background-clip: text) {
+    .gradient-text-safe {
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  @supports not (-webkit-background-clip: text) {
+    .gradient-text-safe {
+      color: #a855f7;
+      -webkit-text-fill-color: initial;
+    }
+  }
+
+  /* Ensure text is visible during font loading */
+  .font-loading-fallback {
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  /* Fix for text selection on gradient text */
+  .gradient-text-safe::selection {
+    background: rgba(168, 85, 247, 0.2);
+    -webkit-text-fill-color: #a855f7;
+  }
+
+  /* Animations for floating elements */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delay {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: -2s;
+  }
+
+  .animate-float-delay-2 {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: -4s;
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  /* Improved blob animation */
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  /* Smooth transitions for all interactive elements */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Better backdrop blur support */
+  .backdrop-blur-custom {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  @supports not (backdrop-filter: blur(16px)) {
+    .backdrop-blur-custom {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
   }
 }

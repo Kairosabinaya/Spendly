@@ -1,0 +1,106 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions for validation
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isValidExpense() {
+      let required = ['amount', 'category', 'date', 'createdAt'];
+      let allowedFields = ['amount', 'category', 'date', 'description', 'note', 'createdAt', 'updatedAt'];
+      
+      return required.all(field => field in resource.data) &&
+             resource.data.keys().hasAll(required) &&
+             resource.data.keys().hasOnly(allowedFields) &&
+             resource.data.amount is number &&
+             resource.data.amount > 0 &&
+             resource.data.category is string &&
+             resource.data.category.size() > 0 &&
+             resource.data.date is timestamp &&
+             resource.data.createdAt is timestamp;
+    }
+    
+    function isValidCategory() {
+      let required = ['name', 'icon', 'color', 'isActive', 'createdAt'];
+      let allowedFields = ['name', 'icon', 'color', 'isActive', 'userId', 'createdAt', 'updatedAt'];
+      
+      return required.all(field => field in resource.data) &&
+             resource.data.keys().hasAll(required) &&
+             resource.data.keys().hasOnly(allowedFields) &&
+             resource.data.name is string &&
+             resource.data.name.size() > 0 &&
+             resource.data.icon is string &&
+             resource.data.color is string &&
+             resource.data.isActive is bool &&
+             resource.data.createdAt is timestamp;
+    }
+    
+    function isValidBudget() {
+      let required = ['category', 'amount', 'period', 'createdAt'];
+      let allowedFields = ['category', 'amount', 'period', 'notifications', 'createdAt', 'updatedAt'];
+      
+      return required.all(field => field in resource.data) &&
+             resource.data.keys().hasAll(required) &&
+             resource.data.keys().hasOnly(allowedFields) &&
+             resource.data.category is string &&
+             resource.data.amount is number &&
+             resource.data.amount > 0 &&
+             resource.data.period is string &&
+             resource.data.period in ['monthly', 'weekly', 'yearly'] &&
+             resource.data.createdAt is timestamp;
+    }
+    
+    // User profile rules
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && isOwner(userId);
+      
+      // User expenses subcollection
+      match /expenses/{expenseId} {
+        allow read, write: if isAuthenticated() && isOwner(userId);
+        allow create: if isAuthenticated() && isOwner(userId) && isValidExpense();
+        allow update: if isAuthenticated() && isOwner(userId) && isValidExpense();
+        allow delete: if isAuthenticated() && isOwner(userId);
+      }
+      
+      // User budgets subcollection
+      match /budgets/{budgetId} {
+        allow read, write: if isAuthenticated() && isOwner(userId);
+        allow create: if isAuthenticated() && isOwner(userId) && isValidBudget();
+        allow update: if isAuthenticated() && isOwner(userId) && isValidBudget();
+        allow delete: if isAuthenticated() && isOwner(userId);
+      }
+      
+      // User custom categories subcollection
+      match /categories/{categoryId} {
+        allow read, write: if isAuthenticated() && isOwner(userId);
+        allow create: if isAuthenticated() && isOwner(userId) && isValidCategory();
+        allow update: if isAuthenticated() && isOwner(userId) && isValidCategory();
+        allow delete: if isAuthenticated() && isOwner(userId);
+      }
+    }
+    
+    // Global categories (read-only for all authenticated users)
+    match /globalCategories/{categoryId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admin can manage global categories
+    }
+    
+    // App settings (read-only for all authenticated users)
+    match /appSettings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admin can manage app settings
+    }
+    
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+} 

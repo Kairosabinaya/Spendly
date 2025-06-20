@@ -1,8 +1,84 @@
 export const navItems = [
-  { name: "About", link: "#about" },
-  { name: "Projects", link: "#projects" },
-  { name: "Testimonials", link: "#testimonials" },
-  { name: "Contact", link: "#contact" },
+  { name: "Dashboard", link: "/dashboard" },
+  { name: "Add Expense", link: "/add-expense" },
+  { name: "Analytics", link: "/analytics" },
+  { name: "Profile", link: "/profile" },
+];
+
+export const expenseCategories = [
+  "Food & Dining",
+  "Transportation",
+  "Shopping",
+  "Entertainment",
+  "Bills & Utilities",
+  "Healthcare",
+  "Travel",
+  "Education",
+  "Groceries",
+  "Other"
+];
+
+export const dashboardStats = [
+  {
+    id: 1,
+    title: "Total Expenses",
+    description: "This Month",
+    className: "lg:col-span-2 md:col-span-3 md:row-span-2 lg:min-h-[60vh]",
+    imgClassName: "w-full h-full opacity-30",
+    titleClassName: "justify-end",
+    img: "/grid.svg",
+    spareImg: "",
+  },
+  {
+    id: 2,
+    title: "Categories Breakdown",
+    description: "Top spending categories",
+    className: "lg:col-span-2 md:col-span-3 md:row-span-2",
+    imgClassName: "",
+    titleClassName: "justify-start",
+    img: "",
+    spareImg: "",
+  },
+  {
+    id: 3,
+    title: "Monthly Trend",
+    description: "Spending over time",
+    className: "lg:col-span-2 md:col-span-3 md:row-span-2",
+    imgClassName: "",
+    titleClassName: "justify-center",
+    img: "",
+    spareImg: "",
+  },
+  {
+    id: 4,
+    title: "Recent Transactions",
+    description: "Latest expense entries",
+    className: "lg:col-span-2 md:col-span-3 md:row-span-1",
+    imgClassName: "",
+    titleClassName: "justify-start",
+    img: "/grid.svg",
+    spareImg: "/b4.svg",
+  },
+  {
+    id: 5,
+    title: "Budget Analysis",
+    description: "Track your spending goals",
+    className: "md:col-span-3 md:row-span-2",
+    imgClassName: "absolute right-0 bottom-0 md:w-96 w-60 opacity-50",
+    titleClassName: "justify-center md:justify-start lg:justify-center",
+    img: "/b5.svg",
+    spareImg: "/grid.svg",
+  },
+  {
+    id: 6,
+    title: "Export Data",
+    description: "Download your expense reports",
+    className: "lg:col-span-2 md:col-span-3 md:row-span-1",
+    imgClassName: "",
+    titleClassName: "justify-center md:max-w-full max-w-60 text-center",
+    img: "",
+    spareImg: "",
+  },
 ];
 
 export const gridItems = [
